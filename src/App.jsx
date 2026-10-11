@@ -1,5 +1,6 @@
 
 import './App.css'
+import ImportarExtrato from './components/importacao/ImportarExtrato'
 
 function App() {
   return (
@@ -62,6 +63,8 @@ function App() {
           <p>Prepare uma planilha para facilitar a prestação de contas.</p>
         </article>
       </section>
+
+      <ImportarExtrato />
 
       <footer className="rodape">
         <p>Pedágio Fácil · Projeto acadêmico de extensão universitária</p>
