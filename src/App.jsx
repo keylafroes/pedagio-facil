@@ -1,121 +1,72 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
+    <main className="app">
+      <header className="cabecalho">
+        <a className="marca" href="#inicio">
+          <span className="marca-icone">PF</span>
+          <span>Pedágio Fácil</span>
+        </a>
+
+        <span className="selo">Controle de despesas</span>
+      </header>
+
+      <section className="apresentacao" id="inicio">
+        <p className="sobretitulo">ORGANIZE SUAS DESPESAS</p>
+
+        <h1>
+          Seus pedágios,
+          <br />
+          <span>mais organizados.</span>
+        </h1>
+
+        <p className="descricao">
+          Confira os pedágios pagos por você, separe os valores
+          custeados pela empresa e prepare sua planilha de reembolso.
+        </p>
+
+        <div className="aviso">
+          <span aria-hidden="true">ⓘ</span>
           <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+            Esta é a primeira versão do sistema. A importação e
+            leitura dos extratos serão implementadas nas próximas etapas.
           </p>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
+        <div className="acoes">
+          <button className="botao-principal" type="button" disabled>
+            Importar extrato
+          </button>
+          <span className="status">Em desenvolvimento</span>
         </div>
       </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      <section className="recursos" aria-label="Recursos planejados">
+        <article className="cartao">
+          <span className="cartao-icone">01</span>
+          <h2>Organize</h2>
+          <p>Visualize as informações das passagens em uma única tela.</p>
+        </article>
+
+        <article className="cartao">
+          <span className="cartao-icone">02</span>
+          <h2>Confira</h2>
+          <p>Diferencie os pedágios pagos pelo motorista dos custeados pela empresa.</p>
+        </article>
+
+        <article className="cartao">
+          <span className="cartao-icone">03</span>
+          <h2>Exporte</h2>
+          <p>Prepare uma planilha para facilitar a prestação de contas.</p>
+        </article>
+      </section>
+
+      <footer className="rodape">
+        <p>Pedágio Fácil · Projeto acadêmico de extensão universitária</p>
+      </footer>
+    </main>
   )
 }
 
