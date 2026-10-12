@@ -1,16 +1,80 @@
-# React + Vite
+# Pedágio Fácil
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+O **Pedágio Fácil** é uma aplicação web desenvolvida para facilitar a organização e a análise de extratos de pedágio da ConectCar, auxiliando na identificação e separação dos lançamentos e na visualização dos valores correspondentes.
 
-Currently, two official plugins are available:
+O projeto surgiu a partir de uma demanda real em que motoristas buscavam por uma solução que simplificasse esse processo, sendo desenvolvido como parte de uma atividade de extensão acadêmica.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Funcionalidades
 
-## React Compiler
+- Importação de extratos ConectCar em formatos compatíveis, como Excel e CSV.
+- Classificação dos lançamentos entre Motorista e Empresa.
+- Separação dos valores por categoria.
+- Desconsideração de créditos e recargas nos cálculos dos totais de despesas.
+- Identificação de lançamentos que precisam de revisão.
+- Exportação dos resultados para uma planilha Excel com abas de resumo e lançamentos, filtros e formatação.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tecnologias utilizadas
 
-## Expanding the ESLint configuration
+- React
+- Vite
+- JavaScript
+- ExcelJS
+- SheetJS (XLSX)
+- HTML e CSS
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Como executar o projeto localmente
+
+### Pré-requisitos
+
+- Node.js instalado.
+- npm disponível no terminal.
+
+### Instalação
+
+1. Clone o repositório:
+
+   ```bash
+   git clone https://github.com/keylafroes/pedagio-facil.git
+   ```
+
+2. Acesse a pasta do projeto:
+
+   ```bash
+   cd pedagio-facil
+   ```
+
+3. Instale as dependências:
+
+   ```bash
+   npm install
+   ```
+
+4. Inicie o servidor de desenvolvimento:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Acesse o endereço local informado pelo Vite no terminal.
+
+### Compilação para produção
+
+Para verificar a compilação da aplicação, execute:
+
+```bash
+npm run build
+```
+
+## Acesso à aplicação
+
+**Aplicação publicada:** a ser disponibilizada.
+
+**Repositório:** https://github.com/keylafroes/pedagio-facil
+
+## Privacidade e uso responsável
+
+Utilize arquivos de teste ou extratos devidamente anonimizados durante demonstrações e testes públicos. Não compartilhe informações pessoais, financeiras ou outros dados sensíveis sem autorização.
+
+## Contexto acadêmico
+
+Projeto desenvolvido no contexto de uma atividade de extensão do curso de Análise e Desenvolvimento de Sistemas, com o objetivo de aplicar conhecimentos de desenvolvimento web na construção de uma solução para uma necessidade prática.
