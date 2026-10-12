@@ -27,21 +27,6 @@ function App() {
           Confira os pedágios pagos por você, separe os valores
           custeados pela empresa e prepare sua planilha de reembolso.
         </p>
-
-        <div className="aviso">
-          <span aria-hidden="true">ⓘ</span>
-          <p>
-            Esta é a primeira versão do sistema. A importação e
-            leitura dos extratos serão implementadas nas próximas etapas.
-          </p>
-        </div>
-
-        <div className="acoes">
-          <button className="botao-principal" type="button" disabled>
-            Importar extrato
-          </button>
-          <span className="status">Em desenvolvimento</span>
-        </div>
       </section>
 
       <section className="recursos" aria-label="Recursos planejados">
