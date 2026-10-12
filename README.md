@@ -67,7 +67,7 @@ npm run build
 
 ## Acesso à aplicação
 
-**Aplicação publicada:** a ser disponibilizada.
+**Aplicação publicada:** https://pedagio-facil.vercel.app/
 
 **Repositório:** https://github.com/keylafroes/pedagio-facil
 
