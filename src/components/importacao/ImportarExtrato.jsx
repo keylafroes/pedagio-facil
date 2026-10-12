@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import * as XLSX from 'xlsx'
+import ExcelJS from 'exceljs'
 import './ImportarExtrato.css'
 
 function normalizarTexto(texto = '') {
@@ -107,7 +108,7 @@ function classificarLancamento(descricao, valorDebito) {
     )
 
   if (temDataHora && eConcessionaria) {
-    return 'Cliente'
+    return 'Motorista'
   }
 
   return 'Revisar'
@@ -274,8 +275,8 @@ function ImportarExtrato() {
     }
   }
 
-  const totalCliente = lancamentos
-    .filter((item) => item.classificacao === 'Cliente')
+  const totalMotorista = lancamentos
+    .filter((item) => item.classificacao === 'Motorista')
     .reduce((total, item) => total + (item.valor ?? 0), 0)
 
   const totalEmpresa = lancamentos
@@ -287,78 +288,154 @@ function ImportarExtrato() {
   ).length
 
 
-  function exportarExcel() {
-    const dadosResumo = [
-      ['Resumo do extrato ConectCar'],
-      ['Total do cliente', totalCliente],
-      ['Total da empresa', totalEmpresa],
-      ['Lançamentos para revisão', quantidadeRevisar],
-      ['Total de lançamentos importados', lancamentos.length],
-    ]
 
-    const dadosLancamentos = lancamentos.map((item) => ({
-      'Data do lançamento': item.data,
-      Veículo: item.veiculo,
-      Descrição: item.descricao,
-      'Valor do débito': item.valor,
-      Classificação: item.classificacao,
-    }))
+  async function exportarExcel() {
+    const workbook = new ExcelJS.Workbook()
 
-    const planilhaResumo = XLSX.utils.aoa_to_sheet(dadosResumo)
-    const planilhaLancamentos = XLSX.utils.json_to_sheet(dadosLancamentos)
+    workbook.creator = 'Pedágio Fácil'
+    workbook.subject = 'Extrato de pedágios ConectCar'
+    workbook.created = new Date()
 
-    // Formata os totais como moeda brasileira no Excel.
-    planilhaResumo['B2'].z = '"R$" #,##0.00'
-    planilhaResumo['B3'].z = '"R$" #,##0.00'
+    // Aba de resumo
+    const planilhaResumo = workbook.addWorksheet('Resumo')
 
-    // Formata os valores dos débitos.
-    const intervalo = XLSX.utils.decode_range(
-      planilhaLancamentos['!ref'],
-    )
+    planilhaResumo.addRow(['Resumo do extrato ConectCar'])
+    planilhaResumo.addRow(['Total do motorista', totalMotorista])
+    planilhaResumo.addRow(['Total da empresa', totalEmpresa])
+    planilhaResumo.addRow(['Lançamentos para revisão', quantidadeRevisar])
+    planilhaResumo.addRow([
+      'Total de lançamentos importados',
+      lancamentos.length,
+    ])
 
-    for (let linha = 1; linha <= intervalo.e.r; linha++) {
-      const celula = planilhaLancamentos[`D${linha + 1}`]
+    planilhaResumo.mergeCells('A1:B1')
 
-      if (celula && typeof celula.v === 'number') {
-        celula.z = '"R$" #,##0.00'
-      }
+    planilhaResumo.getRow(1).font = {
+      bold: true,
+      size: 16,
+      color: { argb: 'FFFFFFFF' },
     }
 
-    // Ajusta a largura das colunas da tabela.
-    planilhaLancamentos['!cols'] = [
-      { wch: 24 },
-      { wch: 18 },
-      { wch: 75 },
-      { wch: 18 },
-      { wch: 18 },
+    planilhaResumo.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF6200EE' },
+    }
+
+    planilhaResumo.getColumn(1).width = 36
+    planilhaResumo.getColumn(2).width = 24
+
+    planilhaResumo.getCell('B2').numFmt = '"R$" #,##0.00'
+    planilhaResumo.getCell('B3').numFmt = '"R$" #,##0.00'
+
+    planilhaResumo.eachRow((linha, numero) => {
+      if (numero > 1) {
+        linha.getCell(1).font = { bold: true }
+      }
+    })
+
+
+    // Aba de lançamentos
+    const planilhaLancamentos = workbook.addWorksheet('Lançamentos')
+
+    // Define a largura das colunas.
+    planilhaLancamentos.columns = [
+      { key: 'data', width: 25 },
+      { key: 'veiculo', width: 20 },
+      { key: 'descricao', width: 75 },
+      { key: 'valor', width: 20 },
+      { key: 'classificacao', width: 20 },
     ]
 
-    planilhaResumo['!cols'] = [
-      { wch: 36 },
-      { wch: 22 },
+    // Cria uma tabela estruturada com filtros e linhas alternadas.
+    planilhaLancamentos.addTable({
+      name: 'TabelaLancamentos',
+      ref: 'A1',
+      headerRow: true,
+      totalsRow: false,
+      style: {
+        theme: 'TableStyleMedium2',
+        showRowStripes: true,
+      },
+      columns: [
+        { name: 'Data do lançamento', filterButton: true },
+        { name: 'Veículo', filterButton: true },
+        { name: 'Descrição', filterButton: true },
+        { name: 'Valor do débito', filterButton: true },
+        { name: 'Classificação', filterButton: true },
+      ],
+      rows: lancamentos.map((item) => [
+        item.data,
+        item.veiculo,
+        item.descricao,
+        item.valor,
+        item.classificacao,
+      ]),
+    })
+
+    // Formata a coluna de valores como moeda brasileira.
+    planilhaLancamentos.getColumn(4).numFmt = '"R$" #,##0.00'
+
+    // Ativa a quebra automática de texto na coluna Descrição.
+    for (let i = 2; i <= lancamentos.length + 1; i++) {
+      const celula = planilhaLancamentos.getCell(i, 3)
+
+      celula.alignment = {
+        vertical: 'top',
+        horizontal: 'left',
+        wrapText: true,
+      }
+
+      // Ajusta a altura da linha conforme o tamanho da descrição.
+      const descricao = String(celula.value ?? '')
+      const linhasEstimadas = Math.ceil(descricao.length / 65)
+
+      planilhaLancamentos.getRow(i).height = Math.max(
+        20,
+        Math.min(linhasEstimadas, 6) * 15,
+      )
+    }
+
+
+
+    // Mantém o cabeçalho visível durante a rolagem.
+    planilhaLancamentos.views = [
+      { state: 'frozen', ySplit: 1 },
     ]
 
-    const workbook = XLSX.utils.book_new()
+    // Ajusta a apresentação do cabeçalho.
+    const cabecalho = planilhaLancamentos.getRow(1)
 
-    XLSX.utils.book_append_sheet(
-      workbook,
-      planilhaResumo,
-      'Resumo',
-    )
+    cabecalho.height = 30
+    cabecalho.font = {
+      bold: true,
+      color: { argb: 'FFFFFFFF' },
+    }
+    cabecalho.alignment = {
+      vertical: 'middle',
+      horizontal: 'center',
+      wrapText: true,
+    }
 
-    XLSX.utils.book_append_sheet(
-      workbook,
-      planilhaLancamentos,
-      'Lançamentos',
-    )
 
+    // Gera e baixa o arquivo.
     const dataArquivo = new Date().toISOString().slice(0, 10)
+    const buffer = await workbook.xlsx.writeBuffer()
 
-    XLSX.writeFile(
-      workbook,
-      `pedagio-facil-conectcar-${dataArquivo}.xlsx`,
-    )
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    })
+
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+
+    link.href = url
+    link.download = `pedagio-facil-conectcar-${dataArquivo}.xlsx`
+    link.click()
+
+    URL.revokeObjectURL(url)
   }
+
 
 
   return (
@@ -411,7 +488,7 @@ function ImportarExtrato() {
           </button>
 
           <p>
-            Total do cliente: <strong>{formatarMoeda(totalCliente)}</strong>
+            Total do motorista: <strong>{formatarMoeda(totalMotorista)}</strong>
           </p>
           <p>
             Total da empresa: <strong>{formatarMoeda(totalEmpresa)}</strong>
