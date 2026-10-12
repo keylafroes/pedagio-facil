@@ -286,6 +286,81 @@ function ImportarExtrato() {
     (item) => item.classificacao === 'Revisar',
   ).length
 
+
+  function exportarExcel() {
+    const dadosResumo = [
+      ['Resumo do extrato ConectCar'],
+      ['Total do cliente', totalCliente],
+      ['Total da empresa', totalEmpresa],
+      ['Lançamentos para revisão', quantidadeRevisar],
+      ['Total de lançamentos importados', lancamentos.length],
+    ]
+
+    const dadosLancamentos = lancamentos.map((item) => ({
+      'Data do lançamento': item.data,
+      Veículo: item.veiculo,
+      Descrição: item.descricao,
+      'Valor do débito': item.valor,
+      Classificação: item.classificacao,
+    }))
+
+    const planilhaResumo = XLSX.utils.aoa_to_sheet(dadosResumo)
+    const planilhaLancamentos = XLSX.utils.json_to_sheet(dadosLancamentos)
+
+    // Formata os totais como moeda brasileira no Excel.
+    planilhaResumo['B2'].z = '"R$" #,##0.00'
+    planilhaResumo['B3'].z = '"R$" #,##0.00'
+
+    // Formata os valores dos débitos.
+    const intervalo = XLSX.utils.decode_range(
+      planilhaLancamentos['!ref'],
+    )
+
+    for (let linha = 1; linha <= intervalo.e.r; linha++) {
+      const celula = planilhaLancamentos[`D${linha + 1}`]
+
+      if (celula && typeof celula.v === 'number') {
+        celula.z = '"R$" #,##0.00'
+      }
+    }
+
+    // Ajusta a largura das colunas da tabela.
+    planilhaLancamentos['!cols'] = [
+      { wch: 24 },
+      { wch: 18 },
+      { wch: 75 },
+      { wch: 18 },
+      { wch: 18 },
+    ]
+
+    planilhaResumo['!cols'] = [
+      { wch: 36 },
+      { wch: 22 },
+    ]
+
+    const workbook = XLSX.utils.book_new()
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      planilhaResumo,
+      'Resumo',
+    )
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      planilhaLancamentos,
+      'Lançamentos',
+    )
+
+    const dataArquivo = new Date().toISOString().slice(0, 10)
+
+    XLSX.writeFile(
+      workbook,
+      `pedagio-facil-conectcar-${dataArquivo}.xlsx`,
+    )
+  }
+
+
   return (
     <section
       className="importar-extrato"
@@ -327,15 +402,40 @@ function ImportarExtrato() {
         <div className="resultado-pdf">
           <h3>Resumo dos lançamentos identificados</h3>
 
+          <button
+            type="button"
+            className="importar-extrato__botao-exportar"
+            onClick={exportarExcel}
+          >
+            Exportar para Excel
+          </button>
+
           <p>
             Total do cliente: <strong>{formatarMoeda(totalCliente)}</strong>
           </p>
           <p>
             Total da empresa: <strong>{formatarMoeda(totalEmpresa)}</strong>
           </p>
+
           <p>
-            Lançamentos para revisão: <strong>{quantidadeRevisar}</strong>
+            Lançamentos para revisão:{' '}
+            <strong>{quantidadeRevisar}</strong>
           </p>
+
+          {quantidadeRevisar === 0 ? (
+            <p className="importar-extrato__sucesso" role="status">
+              Todos os lançamentos foram classificados automaticamente.
+            </p>
+          ) : (
+            <p role="status">
+              Existem {quantidadeRevisar}{' '}
+              {quantidadeRevisar === 1
+                ? 'lançamento pendente'
+                : 'lançamentos pendentes'}{' '}
+              de revisão.
+            </p>
+          )}
+
 
           <div className="tabela-lancamentos">
             <table>

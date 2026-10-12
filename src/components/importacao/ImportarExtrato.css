@@ -150,3 +150,31 @@
   cursor: pointer;
   font-weight: 700;
 }
+
+.importar-extrato__sucesso {
+  color: #15803d;
+  font-weight: 600;
+}
+
+
+.importar-extrato__botao-exportar {
+  margin: 0 0 16px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #15803d;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.importar-extrato__botao-exportar:hover {
+  background-color: #166534;
+}
+
+.importar-extrato__botao-exportar:focus-visible {
+  outline: 3px solid #86efac;
+  outline-offset: 3px;
+}
